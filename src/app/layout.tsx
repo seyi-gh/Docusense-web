@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
 import Script from "next/script";
+import DisclaimerWithTimer from "@/components/DisclaimerWithTimer";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -44,10 +45,7 @@ export default function RootLayout({
           })();`}
         </Script>
         {children}
-        <aside className="pointer-events-none fixed bottom-3 left-3 z-50 max-w-[22rem] rounded-xl border border-[var(--border-soft)] bg-[color-mix(in_srgb,var(--surface)_92%,#ffffff_8%)] px-3 py-2 text-xs leading-relaxed text-[var(--text-soft)] shadow-[var(--shadow-soft)] sm:bottom-4 sm:left-4 sm:text-[13px]">
-          Si el servidor no responde al primer intento, espera unos segundos y vuelve a intentar.
-          Cuando Render esta en reposo, puede tardar un momento en despertar.
-        </aside>
+        <DisclaimerWithTimer />
       </body>
     </html>
   );
