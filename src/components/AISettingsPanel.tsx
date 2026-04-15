@@ -161,7 +161,7 @@ export default function AISettingsPanel() {
             <span>
               <span className='block font-semibold text-[var(--text-main)]'>🔒 Usar API del Proyecto (Recomendado)</span>
               <span className='block text-xs leading-relaxed text-[var(--text-soft)]'>
-                MÁS SEGURO. Sin exponer claves al servidor. Limitado a 1 uso cada 48 horas por usuario.
+                MÁS SEGURO. Sin exponer claves al servidor. Limitado a 5 requests cada 48 horas por usuario.
               </span>
             </span>
           </label>
@@ -172,7 +172,7 @@ export default function AISettingsPanel() {
         <p className='font-semibold text-[var(--text-main)]'>🔐 Seguridad de API Keys</p>
         <p className='mt-2 leading-relaxed'>
           <span className='block font-semibold text-[var(--text-main)] mb-1'>API del Proyecto (Recomendado):</span>
-          Las claves del proyecto se guardan en el servidor. Nunca las ves. Una sola solicitud cada 48 horas.
+          Las claves del proyecto se guardan en el servidor. Nunca las ves. Máximo 5 solicitudes cada 48 horas.
         </p>
         <p className='mt-2 leading-relaxed'>
           <span className='block font-semibold text-[var(--text-main)] mb-1'>Tu API Key Personal:</span>
