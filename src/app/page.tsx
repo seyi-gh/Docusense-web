@@ -1,7 +1,40 @@
+"use client";
+
+import { useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import ThemeToggle from "@/components/ThemeToggle";
 
+const SERVER_HAS_SESSION = false;
+
+function readHasSession() {
+  if (typeof window === "undefined") return SERVER_HAS_SESSION;
+  return Boolean(localStorage.getItem("token"));
+}
+
+function subscribeSession(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => {};
+
+  const handleChange = () => onStoreChange();
+  window.addEventListener("storage", handleChange);
+  window.addEventListener("sessionchange", handleChange);
+
+  return () => {
+    window.removeEventListener("storage", handleChange);
+    window.removeEventListener("sessionchange", handleChange);
+  };
+}
+
 export default function Home() {
+  const router = useRouter();
+  const hasSession = useSyncExternalStore(subscribeSession, readHasSession, () => SERVER_HAS_SESSION);
+
+  useEffect(() => {
+    if (hasSession) {
+      router.replace("/documents");
+    }
+  }, [hasSession, router]);
+
   return (
     <main className="page-fade min-h-screen px-6 py-8 sm:px-10">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
@@ -11,9 +44,11 @@ export default function Home() {
           </p>
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link href="/login" className="btn-ghost px-4 py-2 text-sm font-semibold">
-              Iniciar sesion
-            </Link>
+            {!hasSession && (
+              <Link href="/login" className="btn-ghost px-4 py-2 text-sm font-semibold">
+                Iniciar sesion
+              </Link>
+            )}
           </div>
         </header>
 

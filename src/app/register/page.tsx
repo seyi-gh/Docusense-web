@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import type { AxiosError } from 'axios'
 import api from '@/lib/api'
 import ThemeToggle from '@/components/ThemeToggle'
 
@@ -12,10 +13,31 @@ export default function RegisterPage() {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const parseApiError = (err: unknown) => {
+    const fallback = 'Error al registrarse. Revisa tus datos e intenta de nuevo.'
+    const axiosErr = err as AxiosError<{ detail?: string | Array<{ msg?: string }> }>
+    const detail = axiosErr.response?.data?.detail
+
+    if (typeof detail === 'string') return detail
+    if (Array.isArray(detail) && detail.length > 0) {
+      const firstMsg = detail[0]?.msg
+      if (firstMsg) return firstMsg
+    }
+    return fallback
+  }
+
+  const isStrongPassword = (password: string) => /^(?=.*[A-Z])(?=.*\d).{8,}$/.test(password)
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
+
+    if (!isStrongPassword(form.password)) {
+      setError('La contrasena debe tener minimo 8 caracteres, 1 mayuscula y 1 numero.')
+      setLoading(false)
+      return
+    }
 
     try {
       const { data } = await api.post('/auth/register', form)
@@ -24,8 +46,8 @@ export default function RegisterPage() {
       localStorage.setItem('user_email', form.email)
       window.dispatchEvent(new Event('sessionchange'))
       router.push('/documents')
-    } catch {
-      setError('Error al registrarse, intenta con otro email')
+    } catch (err) {
+      setError(parseApiError(err))
     } finally {
       setLoading(false)
     }
@@ -89,10 +111,13 @@ export default function RegisterPage() {
                   type='password'
                   required
                   minLength={8}
+                  pattern='(?=.*[A-Z])(?=.*\d).{8,}'
+                  title='Minimo 8 caracteres, al menos 1 mayuscula y 1 numero'
                   className='input-base'
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                 />
+                <p className='mt-1 text-xs text-[var(--text-soft)]'>Minimo 8 caracteres, 1 mayuscula y 1 numero.</p>
               </div>
 
               <button
