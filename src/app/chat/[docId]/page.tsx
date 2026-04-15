@@ -100,9 +100,11 @@ export default function ChatPage() {
   const sendMessage = async (userMessage: string) => {
     if (!userMessage.trim() || streaming) return
 
-    const nextMessages = [...messages, { role: 'user', content: userMessage }]
+    const userEntry: Message = { role: 'user', content: userMessage }
+    const assistantPlaceholder: Message = { role: 'assistant', content: '' }
+    const nextMessages: Message[] = [...messages, userEntry]
     setInput('')
-    writeConversation(docId, [...nextMessages, { role: 'assistant', content: '' }])
+    writeConversation(docId, [...nextMessages, assistantPlaceholder])
     setStreaming(true)
 
     try {
